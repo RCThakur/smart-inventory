@@ -29,9 +29,19 @@ const Inventory = () => {
 
   const clearEdit = () => setSelectedItem(null);
 
+  const expiredItems = items.filter((item) => new Date(item.expiryDate) < new Date());
+  const lowStockItems = items.filter((item) => Number(item.quantity) < 5);
+
+
   return (
     <div className="inventory-page">
       <h2>Inventory Management</h2>
+            {(expiredItems.length > 0 || lowStockItems.length > 0) && (
+        <div className="alert-banner">
+            {expiredItems.length > 0 && <p>⛔ {expiredItems.length} expired item(s)!</p>}
+            {lowStockItems.length > 0 && <p>⚠️ {lowStockItems.length} low stock item(s)!</p>}
+        </div>
+        )}
       <InventoryForm onSubmit={handleAddOrUpdate} selectedItem={selectedItem} clearEdit={clearEdit} />
       <InventoryList items={items} onEdit={handleEdit} onDelete={handleDelete} />
     </div>
