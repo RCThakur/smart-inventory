@@ -10,8 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "firebase": "^11.9.1",
+    "framer-motion": "^12.18.1",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2",
+    "recharts": "^2.15.3",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
