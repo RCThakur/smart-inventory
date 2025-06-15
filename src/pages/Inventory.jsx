@@ -1,49 +1,137 @@
 // src/pages/Inventory.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import InventoryForm from "../components/InventoryForm";
 import InventoryList from "../components/InventoryList";
+import { db } from "../firebase";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 
 const Inventory = () => {
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("All");
 
-  const handleAddOrUpdate = (item) => {
-    if (item.id) {
-      // Update
-      setItems(items.map((i) => (i.id === item.id ? item : i)));
-    } else {
-      // Add
-      setItems([...items, { ...item, id: uuidv4() }]);
+  // 🔁 Realtime listener from Firestore
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "inventory"), (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setItems(data);
+    });
+    return () => unsubscribe(); // Cleanup
+  }, []);
+
+  const handleAddOrUpdate = async (item) => {
+    try {
+      if (item.id) {
+        // 🔄 Update
+        const docRef = doc(db, "inventory", item.id);
+        await updateDoc(docRef, item);
+      } else {
+        // ➕ Add
+        await addDoc(collection(db, "inventory"), {
+          ...item,
+          createdAt: serverTimestamp(),
+        });
+      }
+      setSelectedItem(null);
+    } catch (error) {
+      alert("Error saving item: " + error.message);
     }
-    setSelectedItem(null);
   };
 
-  const handleEdit = (item) => {
-    setSelectedItem(item);
-  };
+  const handleEdit = (item) => setSelectedItem(item);
 
-  const handleDelete = (id) => {
-    setItems(items.filter((item) => item.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "inventory", id));
+    } catch (error) {
+      alert("Error deleting item: " + error.message);
+    }
   };
 
   const clearEdit = () => setSelectedItem(null);
 
-  const expiredItems = items.filter((item) => new Date(item.expiryDate) < new Date());
+  const expiredItems = items.filter(
+    (item) => new Date(item.expiryDate) < new Date()
+  );
+
   const lowStockItems = items.filter((item) => Number(item.quantity) < 5);
 
+  const categories = ["All", ...new Set(items.map((item) => item.category))];
+
+  const filteredItems = items.filter((item) => {
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      filterCategory === "All" || item.category === filterCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="inventory-page">
       <h2>Inventory Management</h2>
-            {(expiredItems.length > 0 || lowStockItems.length > 0) && (
+
+      {/* 🔔 Alerts */}
+      {(expiredItems.length > 0 || lowStockItems.length > 0) && (
         <div className="alert-banner">
-            {expiredItems.length > 0 && <p>⛔ {expiredItems.length} expired item(s)!</p>}
-            {lowStockItems.length > 0 && <p>⚠️ {lowStockItems.length} low stock item(s)!</p>}
+          {expiredItems.length > 0 && (
+            <p>⛔ {expiredItems.length} expired item(s)!</p>
+          )}
+          {lowStockItems.length > 0 && (
+            <p>⚠️ {lowStockItems.length} low stock item(s)!</p>
+          )}
         </div>
-        )}
-      <InventoryForm onSubmit={handleAddOrUpdate} selectedItem={selectedItem} clearEdit={clearEdit} />
-      <InventoryList items={items} onEdit={handleEdit} onDelete={handleDelete} />
+      )}
+
+      {/* 🔍 Search & Filter */}
+      <div style={{ marginBottom: "16px" }}>
+        <input
+          type="text"
+          placeholder="Search by item name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "8px", width: "200px", marginRight: "16px" }}
+        />
+
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          style={{ padding: "8px" }}
+        >
+          {categories.map((cat, i) => (
+            <option key={i} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* ➕ Form */}
+      <InventoryForm
+        onSubmit={handleAddOrUpdate}
+        selectedItem={selectedItem}
+        clearEdit={clearEdit}
+      />
+
+      {/* 📋 Filtered List */}
+      <InventoryList
+        items={filteredItems}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };

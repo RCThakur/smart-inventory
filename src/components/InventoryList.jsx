@@ -32,6 +32,7 @@ const InventoryList = ({ items, onEdit, onDelete }) => {
               <button onClick={() => onDelete(item.id)}>Delete</button>
             </td>
           </tr>
+          
         ))}
       </tbody>
     </table>

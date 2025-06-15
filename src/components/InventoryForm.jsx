@@ -8,6 +8,7 @@ const InventoryForm = ({ onSubmit, selectedItem, clearEdit }) => {
     quantity: "",
     expiryDate: "",
   });
+  
 
   useEffect(() => {
     if (selectedItem) {
