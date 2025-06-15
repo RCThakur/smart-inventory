@@ -1,12 +1,75 @@
-# React + Vite
+# 📦 SmartInventory
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SmartInventory is a full-featured inventory management system built using **React**, **Firebase**, and **Recharts**. It allows businesses and individuals to easily track stock levels, manage categories, receive stock alerts, and view insightful reports — all from a modern dashboard.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+### 🔐 Authentication
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Firebase Email & Password Login/Signup
+- Protected routes based on user state
+
+### 📋 Inventory Management
+
+- Add, update, delete items
+- Store inventory in Firebase Firestore
+- Live updates with `onSnapshot`
+- Expired and low-stock detection
+
+### 📊 Dynamic Dashboard
+
+- Live overview: Total items, low stock, expired items
+- Recharts Pie and Bar charts for visualization
+- Recently added & expiring soon lists
+
+### 📁 Reporting
+
+- Visual reports by category and stock level
+- PieChart and BarChart views
+- Export-ready structure for future enhancements (PDF/CSV)
+
+### 🧑‍💼 Role-Based Access (coming soon)
+
+- Admin and Staff segregation for secure access
+
+---
+
+## 🛠️ Tech Stack
+
+| Tech             | Usage              |
+| ---------------- | ------------------ |
+| **React**        | UI Components      |
+| **Vite**         | Fast bundler setup |
+| **Firebase**     | Auth & Firestore   |
+| **Recharts**     | Data Visualization |
+| **CSS Modules**  | Scoped styling     |
+| **React Router** | Page navigation    |
+
+---
+
+---
+
+## 📁 Project Structure
+
+src/
+├── components/
+│ └── InventoryForm.jsx, InventoryList.jsx
+├── contexts/
+│ └── AuthContext.jsx
+├── pages/
+│ ├── Dashboard.jsx
+│ ├── Inventory.jsx
+│ ├── AddItem.jsx
+│ ├── Reports.jsx
+│ ├── Login.jsx
+│ ├── Signup.jsx
+│ └── Landing.jsx
+├── styles/
+│ ├── Dashboard.module.css
+│ ├── Auth.css
+│ └── landing.css
+├── firebase.js
+├── App.jsx
+└── main.jsx
