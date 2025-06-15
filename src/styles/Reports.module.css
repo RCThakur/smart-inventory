@@ -1,0 +1,54 @@
+/* src/styles/Reports.module.css */
+
+.reportPage {
+  padding: 2rem;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f9f9fb;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #333;
+}
+
+.header p {
+  color: #666;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.chartCard {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.chartCard:hover {
+  transform: scale(1.01);
+}
+
+.chartCard h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
