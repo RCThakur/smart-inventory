@@ -1,11 +1,9 @@
-// src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase";
-import styles from "../styles/Dashboard.module.css";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import Reports from "./Reports";
+import styles from "../styles/Dashboard.module.css";
 import {
   BarChart,
   Bar,
@@ -16,15 +14,25 @@ import {
   PieChart,
   Pie,
   Cell,
+  Legend,
 } from "recharts";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#9C27B0",
+  "#F44336",
+];
 
 const Dashboard = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const user = auth.currentUser;
 
+  // Fetch inventory in real-time
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "inventory"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
@@ -34,32 +42,46 @@ const Dashboard = () => {
       setItems(data);
       setLoading(false);
     });
-
-    return () => unsubscribe(); // Cleanup listener
+    return () => unsubscribe();
   }, []);
 
-  // Aggregate stats
-  const lowStockCount = items.filter((i) => i.quantity < 10).length;
-  const expiredCount = items.filter((i) => new Date(i.expiryDate) < new Date()).length;
+  // --- Calculations ---
+  const totalItems = items.length;
+  const totalQuantity = items.reduce(
+    (sum, i) => sum + (parseInt(i.quantity) || 0),
+    0
+  );
 
-  // Group by category
+  const lowStockCount = items.filter((i) => i.quantity < 10).length;
+  const expiredCount = items.filter(
+    (i) => new Date(i.expiryDate) < new Date()
+  ).length;
+  const soonToExpireCount = items.filter((i) => {
+    const daysLeft =
+      (new Date(i.expiryDate) - new Date()) / (1000 * 60 * 60 * 24);
+    return daysLeft > 0 && daysLeft <= 7;
+  }).length;
+
+  // --- Category Chart Data ---
   const categoryData = Object.values(
     items.reduce((acc, item) => {
-      acc[item.category] = acc[item.category] || { name: item.category, value: 0 };
-      acc[item.category].value += 1;
+      const category = item.category || "Uncategorized";
+      acc[category] = acc[category] || { name: category, value: 0 };
+      acc[category].value += 1;
       return acc;
     }, {})
   );
 
-  // Recently added (latest 5)
+  // --- Recently Added ---
   const recentItems = [...items]
     .sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds)
     .slice(0, 5);
 
-  // Expiring soon (within 7 days)
+  // --- Expiring Soon ---
   const expiringSoon = items
     .filter((item) => {
-      const daysLeft = (new Date(item.expiryDate) - new Date()) / (1000 * 60 * 60 * 24);
+      const daysLeft =
+        (new Date(item.expiryDate) - new Date()) / (1000 * 60 * 60 * 24);
       return daysLeft > 0 && daysLeft <= 7;
     })
     .sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate))
@@ -67,7 +89,11 @@ const Dashboard = () => {
 
   const formatDate = (d) => {
     try {
-      return new Date(d).toLocaleDateString("en-IN");
+      return new Date(d).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
     } catch {
       return "Invalid";
     }
@@ -79,70 +105,93 @@ const Dashboard = () => {
       <aside className={styles.sidebar}>
         <div className={styles.logo}>📦 SmartInventory</div>
         <nav className={styles.navLinks}>
-          <button onClick={() => navigate("/dashboard")}>Dashboard</button>
-          <button onClick={() => navigate("/inventory")}>Inventory</button>
-          <button onClick={() => navigate("/add")}>Add Item</button>
-          <button onClick={() => navigate("/reports")}>Reports</button>
-          <button onClick={() => navigate("/settings")}>Settings</button>
+          <button onClick={() => navigate("/dashboard")}>🏠 Dashboard</button>
+          <button onClick={() => navigate("/inventory")}>📋 Inventory</button>
+          <button onClick={() => navigate("/add")}>➕ Add Item</button>
+          <button onClick={() => navigate("/reports")}>📈 Reports</button>
+          <button onClick={() => navigate("/settings")}>⚙️ Settings</button>
           <button
             onClick={() => {
               signOut(auth);
               navigate("/login");
             }}
           >
-            Logout
+            🚪 Logout
           </button>
         </nav>
       </aside>
 
+      {/* Main content */}
       <main className={styles.dashboardContent}>
-        {/* Header */}
         <header className={styles.header}>
-          <h1>📊 Dashboard</h1>
-          <button onClick={() => navigate("/Inventory")} className={styles.addButton}>
-            + Add Item
+          <div>
+            <h1>📊 Dashboard</h1>
+            <p>
+              Welcome back, <strong>{user?.email || "User"}</strong> 👋
+            </p>
+          </div>
+          <button onClick={() => navigate("/add")} className={styles.addButton}>
+            + Add New Item
           </button>
         </header>
 
-        {/* Overview */}
+        {/* Overview Cards */}
         <section className={styles.overview}>
-          <div className={styles.card}>Total Items: {items.length}</div>
-          <div className={styles.card}>Low Stock: {lowStockCount}</div>
-          <div className={styles.card}>Expired: {expiredCount}</div>
-          <div className={styles.card}>Categories: {categoryData.length}</div>
+          <div className={`${styles.card} ${styles.primary}`}>
+            <h3>Total Items</h3>
+            <p>{totalItems}</p>
+          </div>
+          <div className={`${styles.card} ${styles.info}`}>
+            <h3>Total Quantity</h3>
+            <p>{totalQuantity}</p>
+          </div>
+          <div className={`${styles.card} ${styles.warning}`}>
+            <h3>Low Stock</h3>
+            <p>{lowStockCount}</p>
+          </div>
+          <div className={`${styles.card} ${styles.danger}`}>
+            <h3>Expired</h3>
+            <p>{expiredCount}</p>
+          </div>
+          <div className={`${styles.card} ${styles.alert}`}>
+            <h3>Expiring Soon</h3>
+            <p>{soonToExpireCount}</p>
+          </div>
         </section>
 
-        {/* Charts */}
+        {/* Charts Section */}
         <section className={styles.charts}>
           <div className={styles.chartContainer}>
-            <h3>Category Distribution</h3>
-            <ResponsiveContainer width="100%" height={250}>
+            <h3>📦 Category Distribution</h3>
+            <ResponsiveContainer width="100%" height={260}>
               <PieChart>
                 <Pie
                   data={categoryData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
-                  fill="#8884d8"
+                  outerRadius={85}
                   dataKey="value"
                   label
                 >
-                  {categoryData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {categoryData.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
+                <Legend />
+                <Tooltip />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
           <div className={styles.chartContainer}>
-            <h3>Inventory Breakdown</h3>
-            <ResponsiveContainer width="100%" height={250}>
+            <h3>📊 Inventory Breakdown</h3>
+            <ResponsiveContainer width="100%" height={260}>
               <BarChart data={categoryData}>
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#2196f3" />
+                <Legend />
+                <Bar dataKey="value" fill="#00C49F" barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -151,33 +200,51 @@ const Dashboard = () => {
         {/* Quick Lists */}
         <section className={styles.quickLists}>
           <div className={styles.quickBox}>
-            <h3>Recently Added</h3>
+            <h3>🆕 Recently Added</h3>
             <ul>
-              {recentItems.map((item) => (
-                <li key={item.id}>
-                  {item.name} - {item.category}
-                </li>
-              ))}
+              {recentItems.length === 0 ? (
+                <p>No recent items.</p>
+              ) : (
+                recentItems.map((item) => (
+                  <li key={item.id}>
+                    <span>{item.name}</span>
+                    <span className={styles.badge}>{item.category}</span>
+                  </li>
+                ))
+              )}
             </ul>
           </div>
+
           <div className={styles.quickBox}>
-            <h3>Expiring Soon</h3>
+            <h3>⏳ Expiring Soon</h3>
             <ul>
-              {expiringSoon.map((item) => {
-                const daysLeft = Math.ceil((new Date(item.expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
-                return (
-                  <li key={item.id}>
-                    {item.name} - {daysLeft} day(s)
-                  </li>
-                );
-              })}
+              {expiringSoon.length === 0 ? (
+                <p>No expiring items.</p>
+              ) : (
+                expiringSoon.map((item) => {
+                  const daysLeft = Math.ceil(
+                    (new Date(item.expiryDate) - new Date()) /
+                      (1000 * 60 * 60 * 24)
+                  );
+                  return (
+                    <li key={item.id}>
+                      <span>{item.name}</span>
+                      <span
+                        className={`${styles.badge} ${styles.warningBadge}`}
+                      >
+                        {daysLeft} day(s)
+                      </span>
+                    </li>
+                  );
+                })
+              )}
             </ul>
           </div>
         </section>
 
         {/* Inventory Table */}
         <section className={styles.inventoryList}>
-          <h2>Inventory Items</h2>
+          <h2>📋 Inventory Items</h2>
           {loading ? (
             <p>Loading...</p>
           ) : items.length === 0 ? (
@@ -187,21 +254,39 @@ const Dashboard = () => {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Name</th>
+                    <th>Item Name</th>
                     <th>Category</th>
                     <th>Quantity</th>
                     <th>Expiry Date</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.name}</td>
-                      <td>{item.category}</td>
-                      <td>{item.quantity}</td>
-                      <td>{formatDate(item.expiryDate)}</td>
-                    </tr>
-                  ))}
+                  {items.map((item) => {
+                    const isExpired = new Date(item.expiryDate) < new Date();
+                    const isLow = item.quantity < 10;
+                    return (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.category}</td>
+                        <td>{item.quantity}</td>
+                        <td>{formatDate(item.expiryDate)}</td>
+                        <td>
+                          {isExpired ? (
+                            <span className={styles.badgeDanger}>Expired</span>
+                          ) : isLow ? (
+                            <span className={styles.badgeWarning}>
+                              Low Stock
+                            </span>
+                          ) : (
+                            <span className={styles.badgeSuccess}>
+                              In Stock
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
