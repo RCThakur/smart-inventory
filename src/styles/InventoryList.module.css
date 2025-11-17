@@ -1,0 +1,113 @@
+/* Card wrapper */
+.listCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 6px 18px rgba(8, 15, 52, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.listCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(8, 15, 52, 0.08);
+}
+
+.title {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+/* Table */
+.tableWrapper {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+.table th,
+.table td {
+  padding: 12px 10px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #e6eef6;
+}
+.table th {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+/* Badges */
+.badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  display: inline-block;
+  font-weight: 500;
+}
+.badgeOk {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #bbf7d0;
+}
+.badgeWarn {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.badgeDanger {
+  background: #fff1f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Actions */
+.iconBtn {
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  margin-right: 6px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+  font-size: 14px;
+}
+.iconBtn:hover {
+  background: rgba(2, 6, 23, 0.05);
+}
+
+/* Expired row highlight */
+.expiredRow {
+  background: linear-gradient(90deg, #fff5f5, #fffafa);
+}
+
+/* Empty */
+.empty {
+  color: #64748b;
+  padding: 12px 0;
+}
+
+/* Skeleton loading */
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.skeletonRow {
+  height: 48px;
+  border-radius: 8px;
+  background: linear-gradient(90deg,#f1f5f9,#ffffff);
+  box-shadow: inset 0 0 0 1px rgba(2,6,23,0.02);
+  animation: pulse 1.4s infinite;
+}
+@keyframes pulse {
+  0% { opacity: .9; }
+  50% { opacity: .6; }
+  100% { opacity: .9; }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .table { min-width: 100%; }
+}
