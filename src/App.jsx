@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
+import AddInventory from "./pages/AddInventory";
+import Settings from "./pages/Settings";
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
       <Route path="/AddItem" element={<Navigate to="/Inventory" />} />
       <Route path="/Reports" element={<Reports />} />
       <Route path="/inventory" element={<Inventory />} />
+      <Route path="/add" element={<AddInventory />} />
+      <Route path="/settings" element={<Settings />} />
     </Routes>
   );
 };
