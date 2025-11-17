@@ -1,54 +1,78 @@
-/* src/styles/Reports.module.css */
-
 .reportPage {
-  padding: 2rem;
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f9f9fb;
-  min-height: 100vh;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 2rem;
+  padding: 40px 48px;
+  font-family: 'Inter', sans-serif;
 }
 
 .header h1 {
-  font-size: 2rem;
-  color: #333;
+  font-weight: 900;
+  font-size: 2.6rem;
+  color: #0f172a;
+  margin-bottom: 6px;
 }
 
 .header p {
-  color: #666;
-  font-size: 1rem;
-  margin-top: 0.25rem;
+  font-size: 1.15rem;
+  color: #475569;
+  margin-bottom: 36px;
+}
+
+.kpiOverview {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 48px;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.kpiCard {
+  flex: 1 1 160px;
+  background: #f0f9ff;
+  border-radius: 18px;
+  padding: 26px 24px;
+  box-shadow: 0 8px 20px #bae6fd94;
+  text-align: center;
+  transition: background-color 0.22s ease;
+}
+
+.kpiCard:hover {
+  background-color: #bae6fd;
+  cursor: default;
+}
+
+.kpiCard h3 {
+  color: #0284c7;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.kpiCard p {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #0369a1;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 36px;
 }
 
 .chartCard {
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  background: white;
+  padding: 32px 28px;
+  border-radius: 22px;
+  box-shadow: 0 10px 28px rgb(0 196 79 / 0.15);
+  transition: box-shadow 0.2s ease;
 }
 
 .chartCard:hover {
-  transform: scale(1.01);
+  box-shadow: 0 14px 38px rgb(0 196 79 / 0.25);
 }
 
 .chartCard h2 {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  color: #222;
+  margin-bottom: 24px;
+  color: #10b981;
+  font-weight: 700;
+  font-size: 1.8rem;
 }
