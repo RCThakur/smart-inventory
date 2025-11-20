@@ -63,3 +63,10 @@
   margin-top: 1rem;
   font-weight: 500;
 }
+
+/* Media queries */
+@media (max-width: 768px) {
+  .add-item-container {
+    padding: 1.5rem;
+  }
+}

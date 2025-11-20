@@ -1,70 +1,134 @@
-.auth-container {
-  max-width: 400px;
-  margin: 60px auto;
-  padding: 32px;
-  background: var(--card-bg, #fff);
-  color: var(--text-color, #333);
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+:root {
+  --accent-color: #334af8;          /* Orange-600: Warm, energetic accent */
+  --accent-color-hover: #f97316;    /* Orange-500: Lighter hover */
+  --card-bg: rgba(255, 255, 255, 0.15);
+  --card-bg-hover: rgba(255, 255, 255, 0.30);
+  --text-color: #fef3c7;            /* Soft cream/golden for text */
+  --input-bg: rgba(250, 204, 21, 0.15);  /* Light golden translucent input */
+  --input-border: rgba(250, 204, 21, 0.35);
 }
 
+
+/* Container with glass effect */
+.auth-container {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 36px 32px;
+  background: var(--card-bg);
+  backdrop-filter: saturate(180%) blur(18px);
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.3);
+  color: var(--text-color);
+  font-family: 'Poppins', 'Inter', sans-serif;
+  transition: background 0.3s ease;
+}
+
+.auth-container:hover {
+  background: var(--card-bg-hover);
+}
+
+/* Headings */
 .auth-container h2 {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: 1.2px;
+  color: var(--text-color);
+  text-shadow: 0 2px 6px rgba(79, 70, 229, 0.8);
 }
 
+/* Form layout */
 .auth-container form {
   display: flex;
   flex-direction: column;
 }
 
-.auth-container input {
-  margin-bottom: 16px;
-  padding: 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+/* Inputs */
+.auth-container input,
+.auth-container select {
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  border: 1.8px solid var(--input-border);
+  border-radius: 12px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  box-sizing: border-box;
+  font-weight: 600;
 }
 
-.auth-container button {
-  padding: 12px;
-  background-color: #007bff;
+.auth-container input::placeholder,
+.auth-container select {
+  color: #d1d5db;
+}
+
+.auth-container input:focus,
+.auth-container select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background-color: rgba(255, 255, 255, 0.6);
+  color: #1e293b;
+  box-shadow: 0 0 12px var(--accent-color);
+  transition: all 0.3s ease;
+  font-weight: 700;
+}
+
+/* Select dropdown option styling */
+.auth-container option {
+  background-color: var(--accent-color);
   color: white;
-  font-weight: bold;
+  font-weight: 600;
+}
+
+/* Buttons */
+.auth-container button {
+  padding: 14px 0;
+  background: var(--accent-color);
+  color: white;
+  font-weight: 800;
   border: none;
-  border-radius: 6px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1.15rem;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+  transition: background 0.3s, transform 0.2s ease;
 }
 
 .auth-container button:hover {
-  background-color: #0056b3;
+  background: var(--accent-color-hover);
+  box-shadow: 0 10px 32px rgba(99, 102, 241, 0.7);
+  transform: scale(1.05);
 }
 
+/* Paragraph for links or messages */
 .auth-container p {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 20px;
+  font-size: 1rem;
+  color: #cbd5e1;
 }
 
+/* Error messages */
 .auth-error {
-  color: red;
+  color: #fecaca;  /* Light red */
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-shadow: 0 0 4px #f87171;
 }
 
-.auth-container select {
-  padding: 20px;
-  background-color: #f2f4f6;
-  color: rgb(10, 10, 10);
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  padding: 12px;
-}
-
-.auth-container option  {
-  background-color: #0056b3;
-  padding: auto;
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-container {
+    margin: 40px 20px;
+    padding: 28px 24px;
+  }
+  .auth-container h2 {
+    font-size: 1.7rem;
+  }
+  .auth-container button {
+    font-size: 1.05rem;
+  }
 }
